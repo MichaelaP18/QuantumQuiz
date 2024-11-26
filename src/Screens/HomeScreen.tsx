@@ -1,82 +1,169 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, } from "react-native";
-import { navigate } from './../../node_modules/@react-navigation/routers/src/CommonActions';
-import { TextInput } from "react-native-paper";
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  TextInput,
+} from 'react-native';
+import {navigate} from './../../node_modules/@react-navigation/routers/src/CommonActions';
 
+import Btn from '../Components/Btn';
 
-function HomeScreen({ navigation, route } : {navigation : any, route : any}) {
-    const [name, setName] = useState(route.params?.name || "");
-    const [number, setNumber] = useState(route.params?.number || "") 
+function HomeScreen({navigation, route}: {navigation: any; route: any}) {
+  const [name, setName] = useState(route.params?.name || '');
+  const [number, setNumber] = useState(route.params?.number || '');
 
-    return (
-    <View>
-        <View>
-            <Text>Welcome to Quantium Quiz!</Text>
-        </View>
-
-        <View>
-            <Text>Enter Your QuarkQuizQuester Name:</Text>
-            <TextInput
+  return (
+    <View style={styles.container}>
+      <View style={styles.innerCon}>
+        <View style={styles.blackCon}>
+          <View style={styles.MainCon}>
+            <View style={styles.logoCon}>
+              <Image
+                style={styles.picStyle}
+                source={require('../img/QuantumQuizLogo.jpeg')}
+              />
+              <Text style={styles.text}>Welcome to QuantumQuiz</Text>
+            </View>
+            <View style={styles.setupBox}>
+              <Text style={styles.subHeader}>
+                Enter Your QuarkQuestor Name:
+              </Text>
+              <TextInput
                 style={styles.input}
-                placeholder="QuarkQuestor Captain John"
-                value={name}
-                onChangeText={setName}
-            />
-            
-            <Text>Enter the Number of Questions</Text>
-            <TextInput 
-            style={styles.input}
-            placeholder="12"
-            value={number}
-            onChangeText={setNumber}
-            />
-
+                placeholder="QuarkQuestor Captain Jack"
+                placeholderTextColor={'white'}
+                inputMode="text"
+                cursorColor={'white'}
+                onChangeText={userInput => setName(userInput)}
+              />
+              <Text style={styles.subHeader}>
+                Number of Questions to Launch:
+              </Text>
+              <TextInput
+                style={styles.input}
+                placeholder="5"
+                placeholderTextColor={'white'}
+                inputMode="numeric"
+                onChangeText={userInput => setNumber(parseInt(userInput))}
+              />
+            </View>
+            <View style={styles.btnBox}>
+              <Btn
+                type={2}
+                title="RESET"
+                onPress={() => {
+                  setName('');
+                  setNumber(0);
+                }}
+              />
+              <Btn
+                type={1}
+                title="LAUNCH"
+                onPress={() => {
+                  navigation.navigate('Quiz', {name, number});
+                  console.log(
+                    'Launching Quiz with :' +
+                      name +
+                      ' ' +
+                      number +
+                      ' questions',
+                  );
+                }}
+              />
+            </View>
+          </View>
         </View>
-
-        
-            
-        
-
-        <TouchableOpacity 
-            style={styles.reset}
-            onPress={() => navigation.navigate("Home Screen")}
-            >
-                Reset
-            </TouchableOpacity>
-
-        <TouchableOpacity
-            style={styles.start}
-            onPress={() => navigation.navigate("Question Screen")}
-            >
-                Start Quantium Quiz
-            </TouchableOpacity>
-
+      </View>
     </View>
-    );
+  );
 }
 
 const styles = StyleSheet.create({
-    txt: {
-        borderRadius: 10,
-    },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#000000',
+  },
+  text: {
+    color: 'white',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 25,
+  },
+  subHeader: {
+    color: 'white',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
+  innerCon: {
+    backgroundColor: '#01BFAE',
+    borderWidth: 5,
+    borderColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
 
-    reset: {
-        borderRadius: 10,
-        backgroundColor: 'red',
-    },
+    height: '98%',
+    width: '96%',
 
-    start: {
-        borderRadius: 10,
-        backgroundColor: 'teal',
-    },
+    borderRadius: 10,
+  },
+  blackCon: {
+    backgroundColor: 'black',
+    height: '98%',
+    width: '98%',
+    borderWidth: 5,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  MainCon: {
+    height: '98%',
+    width: '98%',
+    borderWidth: 5,
+    borderColor: 'white',
+    borderRadius: 10,
+    backgroundColor: 'rgba(55,11,102,1)', // Dark purple with 50% opacity
+  },
+  picStyle: {
+    height: 300,
+    width: 350,
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10,
+    position: 'absolute',
+  },
+  logoCon: {
+    borderWidth: 5,
+    borderColor: 'white',
+    height: 300,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  setupBox: {
+    height: 250,
 
-    input: {
-        borderRadius: 10,
-    },
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  input: {
+    width: 300,
+    height: 50,
+    borderWidth: 2,
+    borderColor: 'white',
+    borderRadius: 10,
+    backgroundColor: 'rgba(155,11,122,0.1)', // Dark purple with 50% opacity
+    color: 'white',
+  },
+  btnBox: {
+    height: 100,
 
-    container: {
-        backgroundColor: 'purple',
-    },
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
-
 export default HomeScreen;
