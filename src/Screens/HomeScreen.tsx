@@ -1,20 +1,16 @@
 import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  TextInput,
-} from 'react-native';
-import {navigate} from './../../node_modules/@react-navigation/routers/src/CommonActions';
+import {View, Text, StyleSheet, Image, TextInput} from 'react-native';
+import Btn from '../components/Btn';
 
-import Btn from '../Components/Btn';
-
-function HomeScreen({navigation, route}: {navigation: any; route: any}) {
-  const [name, setName] = useState(route.params?.name || '');
-  const [number, setNumber] = useState(route.params?.number || '');
-
+function HomeScreen({
+  navigation,
+  route,
+}: {
+  navigation: any;
+  route: any;
+}): React.JSX.Element {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState(0);
   return (
     <View style={styles.container}>
       <View style={styles.innerCon}>
@@ -63,14 +59,8 @@ function HomeScreen({navigation, route}: {navigation: any; route: any}) {
                 type={1}
                 title="LAUNCH"
                 onPress={() => {
-                  navigation.navigate('Quiz', {name, number});
-                  console.log(
-                    'Launching Quiz with :' +
-                      name +
-                      ' ' +
-                      number +
-                      ' questions',
-                  );
+                  navigation.navigate('Quiz', {name: name, number: number});
+                  console.log('Launching Quiz with :' + name + ' ' + number);
                 }}
               />
             </View>
@@ -166,4 +156,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+
 export default HomeScreen;

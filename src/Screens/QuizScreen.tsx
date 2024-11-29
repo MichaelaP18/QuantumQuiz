@@ -1,7 +1,13 @@
-import React from 'react';
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import Btn from '../components/Btn';
-import {BlurView} from '@react-native-community/blur';
 
 function QuizScreen({
   navigation,
@@ -10,6 +16,26 @@ function QuizScreen({
   navigation: any;
   route: any;
 }): React.JSX.Element {
+  const [quizQuestions, setQuizQuestions] = useState([]);
+
+  const number = route.params?.number;
+
+  const fetchQuestion = async () => {
+    try {
+      const response = await fetch(
+        `https://opentdb.com/api.php?amount=${number}`,
+      );
+      const data = await response.json();
+      setQuizQuestions(data.results);
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    fetchQuestion();
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.innerCon}>
@@ -20,12 +46,14 @@ function QuizScreen({
                 <Text style={styles.questionHead}>
                   Question {route.params?.number} for {route.params?.name}:{' '}
                 </Text>
-                <Text style={styles.questionText}>
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo
-                  quos est accusantium enim vitae, at assumenda, sit temporibus
-                  vero magnam perspiciatis culpa sed error facere modi alias,
-                  velit dolorem sapiente.
-                </Text>
+                {quizQuestions.map((question: any, index: number) => (
+                  <ScrollView>
+                    <Text key={index} style={styles.questionText}>
+                      {question.category}
+                    </Text>
+                    <Text>{question.question}</Text>
+                  </ScrollView>
+                ))}
               </View>
             </View>
           </View>
@@ -35,35 +63,69 @@ function QuizScreen({
               source={require('../img/QuantumQuizLogo.jpeg')}
             />
             <View style={styles.answerBox}>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('Answer', {
-                    number: route.params?.number,
-                    name: route.params?.name,
-                  });
-                }}>
-                <View style={styles.answerButtons}>
-                  <Text>Box 1</Text>
+              {quizQuestions.map((question: any) => (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-around',
+                    margin: 10,
+                  }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate('Answer', {
+                        number: route.params?.number,
+                        name: route.params?.name,
+                        question: question.question,
+                        answer: question.correct_answer,
+                        correct: 0,
+                      });
+                    }}>
+                    <View style={styles.answerButtons}>
+                      <Text style={styles.answerText}>
+                        {question.correct_answer}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+
+                  {question.incorrect_answers.map(
+                    (answer: any, index: number) => (
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate('Answer', {
+                            number: route.params?.number,
+                            name: route.params?.name,
+                            question: question.question,
+                            answer: answer,
+                            correct: 1,
+                          });
+                        }}>
+                        <View style={styles.answerButtons}>
+                          <Text style={styles.answerText}>{answer}</Text>
+                        </View>
+                      </TouchableOpacity>
+                    ),
+                  )}
                 </View>
-              </TouchableOpacity>
-              <View style={styles.answerButtons}>
-                <Text>Box 2</Text>
-              </View>
-              <View style={styles.answerButtons}>
-                <Text>Box 3</Text>
-              </View>
-              <View style={styles.answerButtons}>
-                <Text>Box 4</Text>
-              </View>
-              <View style={styles.btnBox}>
-                <Btn
-                  type={2}
-                  title="Go Back to Base"
-                  onPress={() => {
-                    navigation.navigate('Home');
-                  }}
-                />
-              </View>
+              ))}
+            </View>
+
+            <View style={styles.btnBox}>
+              <Btn
+                type={1}
+                title="Next Question"
+                onPress={() => {
+                  navigation.navigate('Quiz');
+                }}
+              />
+
+              <Btn
+                type={2}
+                title="Go Back to Base"
+                onPress={() => {
+                  navigation.navigate('Home');
+                }}
+              />
             </View>
           </View>
         </View>
@@ -90,6 +152,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 15,
+  },
+  answerText: {
+    color: 'black',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 10,
   },
 
   text: {
@@ -136,7 +204,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   picStyle: {
-    height: 375,
+    height: 460,
     width: 350,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
@@ -147,25 +215,25 @@ const styles = StyleSheet.create({
     position: 'absolute',
     height: 275,
     width: 350,
+    flexWrap: 'wrap',
 
     top: 400,
 
-    alignItems: 'center',
     justifyContent: 'center',
   },
 
   btnBox: {
     height: 50,
     width: 350,
+    flexDirection: 'row',
 
     borderRadius: 10,
     position: 'absolute',
     top: 260,
     justifyContent: 'center',
-    right: -26,
   },
   questionBox: {
-    height: 360,
+    height: 270,
     width: 360,
     borderRadius: 10,
     borderWidth: 4,
@@ -176,31 +244,30 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(55,11,152,1)', // Dark purple with 50% opacity
   },
   innerQuestion: {
-    height: '90%',
+    height: 180,
     width: '90%',
     borderWidth: 5,
     borderColor: 'white',
     borderRadius: 10,
+    gap: 10,
+    margin: 10,
 
     backgroundColor: 'white',
-    justifyContent: 'center',
   },
   answerBox: {
-    height: 375,
+    height: 460,
     width: 350,
 
     backgroundColor: 'rgba(55,11,52,0.5)', // Dark purple with 50% opacity
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexWrap: 'wrap',
+    justifyContent: 'space-around',
     position: 'absolute',
     bottom: -70,
   },
   answerButtons: {
     height: 100,
     width: 120,
-    margin: 10,
+
+    borderWidth: 5,
     borderRadius: 10,
     backgroundColor: 'white',
     justifyContent: 'center',

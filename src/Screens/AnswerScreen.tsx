@@ -2,6 +2,7 @@ import React from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import Btn from '../components/Btn';
 import {BlurView} from '@react-native-community/blur';
+import {number} from 'yup';
 
 function AnswerScreen({
   navigation,
@@ -10,6 +11,7 @@ function AnswerScreen({
   navigation: any;
   route: any;
 }): React.JSX.Element {
+  const question = route.params?.question;
   return (
     <View style={styles.container}>
       <View style={styles.innerCon}>
@@ -21,10 +23,7 @@ function AnswerScreen({
                   Question {route.params?.number} for {route.params?.name}:{' '}
                 </Text>
                 <Text style={styles.questionText}>
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo
-                  quos est accusantium enim vitae, at assumenda, sit temporibus
-                  vero magnam perspiciatis culpa sed error facere modi alias,
-                  velit dolorem sapiente.
+                  {route.params?.question}
                 </Text>
               </View>
             </View>
@@ -35,15 +34,15 @@ function AnswerScreen({
               source={require('../img/QuantumQuizLogo.jpeg')}
             />
             <View style={styles.answerBox}>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('Answer', {
-                    number: route.params?.number,
-                    name: route.params?.name,
-                  });
-                }}>
+              <TouchableOpacity onPress={() => {}}>
                 <View style={styles.answerButtons}>
-                  <Text style={styles.answerText}>Correct Answer</Text>
+                  <Text
+                    style={[
+                      styles.answerText,
+                      route.params?.correct == 0 ? null : {color: 'red'},
+                    ]}>
+                    {route.params?.answer}
+                  </Text>
                 </View>
               </TouchableOpacity>
 
@@ -53,6 +52,13 @@ function AnswerScreen({
                   title="Go Back to Base"
                   onPress={() => {
                     navigation.navigate('Home');
+                  }}
+                />
+                <Btn
+                  type={1}
+                  title="Next Question"
+                  onPress={() => {
+                    navigation.navigate('Quiz');
                   }}
                 />
               </View>
@@ -152,12 +158,11 @@ const styles = StyleSheet.create({
   btnBox: {
     height: 50,
     width: 350,
-
+    flexDirection: 'row',
     borderRadius: 10,
     position: 'absolute',
     top: 260,
     justifyContent: 'center',
-    right: -26,
   },
   questionBox: {
     height: 360,
@@ -203,7 +208,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
-    bottom: -70,
+    bottom: -50,
     right: -290,
   },
 });
