@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {StyleSheet} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -12,12 +12,21 @@ import AnswerScreen from './Screens/AnswerScreen';
 const Stack = createNativeStackNavigator();
 
 function App(): React.JSX.Element {
+  const [name, setName] = useState("");
+  const [questions, setQuestions] = useState("");
+  const [score, setScore] = useState(0);
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} />
 
-        <Stack.Screen name="Quiz" component={QuizScreen} />
+        <Stack.Screen 
+          name="Quiz" 
+          component={QuizScreen}
+          score={score}
+          setScore={setScore}
+        />
         <Stack.Screen name="Answer" component={AnswerScreen} />
 
         <Stack.Screen name="Win" component={WinScreen} />

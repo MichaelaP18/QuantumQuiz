@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, {useState} from 'react';
 import {
   View,
@@ -14,6 +15,7 @@ import Btn from '../Components/Btn';
 function HomeScreen({navigation, route}: {navigation: any; route: any}) {
   const [name, setName] = useState(route.params?.name || '');
   const [number, setNumber] = useState(route.params?.number || '');
+  const [score, setScore] = useState(0);
 
   return (
     <View style={styles.container}>
