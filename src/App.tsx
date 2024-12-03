@@ -12,9 +12,7 @@ import AnswerScreen from './Screens/AnswerScreen';
 const Stack = createNativeStackNavigator();
 
 function App(): React.JSX.Element {
-  const [name, setName] = useState("");
-  const [questions, setQuestions] = useState("");
-  const [score, setScore] = useState(0);
+  
 
   return (
     <NavigationContainer>
